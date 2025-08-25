@@ -3,7 +3,8 @@
 // HTTP/1 requests gRPC invocation.
 // You rarely need to run this program directly. Instead, put this program
 // into your $PATH with a name "protoc-gen-grpc-gateway" and run
-//   protoc --grpc-gateway_out=output_directory path/to/input.proto
+//
+//	protoc --grpc-gateway_out=output_directory path/to/input.proto
 //
 // See README.md for more details.
 package main
@@ -139,12 +140,20 @@ func main() {
 	emitFiles(out)
 }
 
+const supportedCodeGeneratorFeatures = uint64(plugin.CodeGeneratorResponse_FEATURE_PROTO3_OPTIONAL)
+
 func emitFiles(out []*plugin.CodeGeneratorResponse_File) {
-	emitResp(&plugin.CodeGeneratorResponse{File: out})
+	emitResp(&plugin.CodeGeneratorResponse{
+		File:              out,
+		SupportedFeatures: proto.Uint64(supportedCodeGeneratorFeatures),
+	})
 }
 
 func emitError(err error) {
-	emitResp(&plugin.CodeGeneratorResponse{Error: proto.String(err.Error())})
+	emitResp(&plugin.CodeGeneratorResponse{
+		Error:             proto.String(err.Error()),
+		SupportedFeatures: proto.Uint64(supportedCodeGeneratorFeatures),
+	})
 }
 
 func emitResp(resp *plugin.CodeGeneratorResponse) {
